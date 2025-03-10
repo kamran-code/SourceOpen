@@ -51,6 +51,8 @@ class BotManController extends Controller
         $botman->fallback(function (BotMan $bot) use ($request) {
             $userMessage = $request->input('message');
 
+
+            $bot->typesAndWaits(2); 
             // Call OpenAI API
             $openAIResponse = Http::withHeaders([
                 'Authorization' => 'Bearer ' . env('TOGETHER_API_KEY'),

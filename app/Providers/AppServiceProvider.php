@@ -9,6 +9,7 @@ use BotMan\BotMan\Drivers\DriverManager;
 use BotMan\BotMan\Cache\LaravelCache;
 use BotMan\Drivers\Web\WebDriver;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -35,5 +36,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        VerifyCsrfToken::except(['/botman']);
     }
 }
