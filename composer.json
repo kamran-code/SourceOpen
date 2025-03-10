@@ -6,8 +6,12 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "botman/botman": "^2.8",
+        "botman/driver-web": "^1.5",
+        "illuminate/cache": "*",
         "laravel/framework": "^11.9",
-        "laravel/tinker": "^2.9"
+        "laravel/tinker": "^2.9",
+        "symfony/cache": "^7.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -21,7 +25,8 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Database\\Seeders\\": "database/seeders/",
+             "BotMan\\BotMan\\": "vendor/botman/botman/src/"
         }
     },
     "autoload-dev": {
