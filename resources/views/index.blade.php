@@ -170,14 +170,14 @@
         </div>
     </body>
     <script src="https://cdn.jsdelivr.net/npm/botman-web-widget@0/build/js/widget.min.js"></script>
-<script>
-    var botmanWidget = {
+    <script>
+        var botmanWidget = {
         title: "MakSoft Chatbot",
         introMessage: "Hello! Ask me anything about MakSoft.",
-        mainColor: "#408591",
+        mainColor: "#cf1d1d",
         bubbleBackground: "#3498db",
         aboutText: "Powered by BotMan",
         chatServer: "/botman"
-    };
-</script>
+         };
+    </script>
 </html>
