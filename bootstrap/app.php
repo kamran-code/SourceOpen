@@ -13,7 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         //
         $middleware->validateCsrfTokens(except: [
-            'botman' 
+            'botman',
+            'botman/*'
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
