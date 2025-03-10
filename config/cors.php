@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://127.0.0.1:5501'],
+    'allowed_origins' => ['http://127.0.0.1:5501','https://www.maksoft.in/'],
 
     'allowed_origins_patterns' => [],
 
