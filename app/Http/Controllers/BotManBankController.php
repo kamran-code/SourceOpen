@@ -10,7 +10,7 @@ use BotMan\BotMan\Drivers\DriverManager;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use Illuminate\Support\Facades\Http;
 
-class BotmanBankController extends Controller
+class BotManBankController extends Controller
 {
     //
     public function handle(Request $request)
