@@ -170,14 +170,21 @@
         </div>
     </body>
     <script src="https://cdn.jsdelivr.net/npm/botman-web-widget@0/build/js/widget.min.js"></script>
-    <script>
-        var botmanWidget = {
-        title: "MakSoft Chatbot",
-        introMessage: "Hello! Ask me anything about MakSoft.",
-        mainColor: "#cf1d1d",
-        bubbleBackground: "#3498db",
-        aboutText: "Powered by BotMan",
-        chatServer: "/botman"
-         };
-    </script>
+<script>
+    var botmanWidget = {
+        title: "💳 CBMgarh Virtual Assistant",
+        introMessage: "👋 Welcome to CBMgarh! How can I assist you today?",
+        mainColor: "#0A3D62",  
+        bubbleBackground: "#000000",  
+        aboutText: "🚀 Powered by CBMgarh Bank",
+        bubbleAvatarUrl: "https://img.icons8.com/?size=100&id=8dViXhX9K4du&format=png&color=000000",  
+        headerTextColor: "#FFFFFF", 
+        textColor: "#2C3E50",  
+        placeholderTextColor: "#7F8C8D",
+        desktopHeight: 500, 
+        desktopWidth: 400,  
+        chatServer: "/botman-bank"
+    };
+</script>
+
 </html>
