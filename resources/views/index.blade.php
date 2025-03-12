@@ -176,7 +176,7 @@
         introMessage: "👋 Welcome to CBMgarh! How can I assist you today?",
         mainColor: "#0A3D62",  
         bubbleBackground: "#000000",  
-        aboutText: "🚀 Powered by CBMgarh Bank",
+        aboutText: "🚀 Powered by CBMgarh-Bank",
         bubbleAvatarUrl: "https://img.icons8.com/?size=100&id=8dViXhX9K4du&format=png&color=000000",  
         headerTextColor: "#FFFFFF", 
         textColor: "#2C3E50",  
