@@ -170,21 +170,45 @@
         </div>
     </body>
     <script src="https://cdn.jsdelivr.net/npm/botman-web-widget@0/build/js/widget.min.js"></script>
-<script>
-    var botmanWidget = {
-        title: "💳 CBMgarh Virtual Assistant",
-        introMessage: "👋 Welcome to CBMgarh! How can I assist you today?",
-        mainColor: "#0A3D62",  
-        bubbleBackground: "#000000",  
-        aboutText: "🚀 Powered by CBMgarh Bank",
-        bubbleAvatarUrl: "https://img.icons8.com/?size=100&id=8dViXhX9K4du&format=png&color=000000",  
-        headerTextColor: "#FFFFFF", 
-        textColor: "#2C3E50",  
-        placeholderTextColor: "#7F8C8D",
-        desktopHeight: 500, 
-        desktopWidth: 400,  
-        chatServer: "/botman-bank"
-    };
-</script>
+    <style>
+        .botman-chat-input {
+            display: none !important; /* Hides the input box */
+        }
+    </style>
+    <script>
+        var botmanWidget = {
+            title: "💳 TripToll Virtual Assistant",
+            introMessage: "👋 Welcome to TripToll! How can I assist you today?",
+            mainColor: "#010E2A",  
+            bubbleBackground: "#000000",  
+            aboutText: "🚀 Powered by TripToll",
+            bubbleAvatarUrl: "https://img.icons8.com/?size=100&id=8dViXhX9K4du&format=png&color=000000",  
+            headerTextColor: "#FFFFFF", 
+            textColor: "#2C3E50",  
+            placeholderTextColor: "#7F8C8D",
+            desktopHeight: 500, 
+            desktopWidth: 400,  
+            chatServer: "/botman-triptoll",
+            
+        };
+    
+        
+        window.addEventListener("load", function () {
+        var checkWidget = setInterval(function () {
+            if (window.botmanChatWidget && typeof window.botmanChatWidget.say === "function") {
+                clearInterval(checkWidget); // Stop checking once it's loaded
+                setTimeout(function () {
+                    window.botmanChatWidget.open(); // Open chatbot
+                    setTimeout(function () {
+                        window.botmanChatWidget.say("Hello");
+                    }, 500); // Small delay before sending message
+                }, 1000);
+            } else {
+               
+            }
+        }, 500); // Check every 500ms
+    });
+    </script>
+    
 
 </html>

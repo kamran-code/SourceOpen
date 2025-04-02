@@ -13,4 +13,5 @@ Route::get('/welcome', function () {
 Route::get('/', [HomeController::class,'index']);
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 Route::match(['get', 'post'], '/botman-bank', [BotManBankController::class, 'handle']);
+Route::match(['get', 'post'], '/botman-triptoll', [BotManBankController::class, 'handle_triptoll']);
 

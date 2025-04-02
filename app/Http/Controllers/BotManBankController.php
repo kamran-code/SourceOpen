@@ -7,8 +7,41 @@ use BotMan\BotMan\BotMan;
 use BotMan\BotMan\BotManFactory;
 use BotMan\BotMan\Cache\LaravelCache;
 use BotMan\BotMan\Drivers\DriverManager;
+use BotMan\BotMan\Messages\Outgoing\Question;
+use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use Illuminate\Support\Facades\Http;
+use BotMan\BotMan\Interfaces\Middleware\Received;
+use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BookingNotification;
+use BotMan\BotMan\Middleware\Dialogflow;
+
+
+class MessageHistoryMiddleware implements Received
+{
+    public function received(\BotMan\BotMan\Messages\Incoming\IncomingMessage $message, $next, BotMan $bot)
+    {
+        $userId = $message->getSender();
+        $userMessage = $message->getText();
+        $timestamp = Carbon::now()->format('Y-m-d H:i:s');
+
+        $history = Cache::get('user_messages_' . $userId, '');
+        $newEntry = "User ({$timestamp}): {$userMessage}\n";
+
+        $updatedHistory = $newEntry . $history;
+
+        // Truncate history if too long
+        if (strlen($updatedHistory) > 2000) {
+            $updatedHistory = substr($updatedHistory, 0, 2000);
+        }
+
+        Cache::put('user_messages_' . $userId, $updatedHistory, now()->addDays(7));
+        return $next($message);
+    }
+}
+
 
 class BotManBankController extends Controller
 {
@@ -101,5 +134,159 @@ class BotManBankController extends Controller
 
         // Listen for input
         $botman->listen();
+    }
+
+    public function handle_triptoll(Request $request)
+    {
+        // Load Web Driver
+        DriverManager::loadDriver(\BotMan\Drivers\Web\WebDriver::class);
+
+        // BotMan Configuration
+        $config = config('botman');
+
+        // Create BotMan instance
+        $botman = BotManFactory::create($config, new LaravelCache());
+
+        // Start Chatbot with Buttons
+        $botman->hears('hi|Hello|start', function (BotMan $bot) {
+            $question = Question::create("👋 Welcome to Triptoll Packers and Movers! How can I assist you today?")
+                ->addButtons([
+                    Button::create('📦 Book a Move')->value('book_move'),
+                    Button::create('ℹ️ Get Pricing Info')->value('get_pricing'),
+                    Button::create('📞 Contact Support')->value('contact_support'),
+                ]);
+
+            $bot->reply($question);
+        });
+
+        $botman->hears('get_pricing', function (BotMan $bot) {
+            $bot->reply("💰 Our pricing depends on distance, items, and additional services. Please visit our website or call us at +91 9876543210 for a free quote.");
+        });
+        
+       
+        $botman->hears('contact_support', function (BotMan $bot) {
+            $bot->reply("📞 You can reach our support team at +91 9876543210 or email us at support@triptoll.com. We're here to help!");
+        });
+
+        // Handle "Book a Move" Click
+        $botman->hears('book_move', function (BotMan $bot) {
+            $question = Question::create("📅 Select your move date:")
+                ->addButtons([
+                    Button::create('Tomorrow')->value('move_tomorrow'),
+                    Button::create('Next Week')->value('move_next_week'),
+                    Button::create('Next Month')->value('move_next_month'),
+                ]);
+
+            $bot->reply($question);
+        });
+
+        // Explicitly handle each move date selection
+        $botman->hears('move_tomorrow', function (BotMan $bot) {
+            Cache::put('move_date', 'Tomorrow', now()->addMinutes(30));
+
+            $question = Question::create("📍 Where is your pickup location?")
+                ->addButtons([
+                    Button::create('📍 Delhi NCR')->value('location_delhi'),
+                    Button::create('📍 Mumbai')->value('location_mumbai'),
+                    Button::create('📍 Bangalore')->value('location_bangalore'),
+                ]);
+
+            $bot->reply($question);
+        });
+
+        $botman->hears('move_next_week', function (BotMan $bot) {
+            Cache::put('move_date', 'Next Week', now()->addMinutes(30));
+
+            $question = Question::create("📍 Where is your pickup location?")
+                ->addButtons([
+                    Button::create('📍 Delhi NCR')->value('location_delhi'),
+                    Button::create('📍 Mumbai')->value('location_mumbai'),
+                    Button::create('📍 Bangalore')->value('location_bangalore'),
+                ]);
+
+            $bot->reply($question);
+        });
+
+        $botman->hears('move_next_month', function (BotMan $bot) {
+            Cache::put('move_date', 'Next Month', now()->addMinutes(30));
+
+            $question = Question::create("📍 Where is your pickup location?")
+                ->addButtons([
+                    Button::create('📍 Delhi NCR')->value('location_delhi'),
+                    Button::create('📍 Mumbai')->value('location_mumbai'),
+                    Button::create('📍 Bangalore')->value('location_bangalore'),
+                ]);
+
+            $bot->reply($question);
+        });
+
+        // Handle Location Selection
+        $botman->hears('location_delhi|location_mumbai|location_bangalore', function (BotMan $bot) {
+            $location = $bot->getMessage()->getText(); // Get the clicked button value
+        
+            $locationMap = [
+                'location_delhi' => 'Delhi NCR',
+                'location_mumbai' => 'Mumbai',
+                'location_bangalore' => 'Bangalore'
+            ];
+        
+            if (!isset($locationMap[$location])) {
+                $bot->reply("❌ Invalid location. Please select a valid location.");
+                return;
+            }
+        
+            $selectedLocation = $locationMap[$location];
+        
+            Cache::put('pickup_location', $selectedLocation, now()->addMinutes(30));
+        
+            $bot->reply("✅ Move booked! 🎉 We will pick up your items from **{$selectedLocation}**. You will receive an email confirmation shortly.");
+        });
+        
+
+        // Listen for input
+        $botman->listen();
+    }
+
+    // **Helper function for Move Date question**
+    private function moveDateQuestion()
+    {
+        return Question::create("📅 Select your move date:")
+            ->addButtons([
+                Button::create('Tomorrow')->value('Tomorrow'),
+                Button::create('Next Week')->value('Next Week'),
+                Button::create('Next Month')->value('Next Month'),
+            ]);
+    }
+
+    // **Helper function for Pickup Location question**
+    private function pickupLocationQuestion()
+    {
+        return Question::create("📍 Where is your pickup location?")
+            ->addButtons([
+                Button::create('Mumbai')->value('Mumbai'),
+                Button::create('Delhi')->value('Delhi'),
+                Button::create('Bangalore')->value('Bangalore'),
+            ]);
+    }
+
+    // **Helper function for Destination question**
+    private function destinationQuestion()
+    {
+        return Question::create("➡️ Where do you want to move?")
+            ->addButtons([
+                Button::create('Pune')->value('Pune'),
+                Button::create('Chennai')->value('Chennai'),
+                Button::create('Hyderabad')->value('Hyderabad'),
+            ]);
+    }
+
+    // **Helper function for Confirm Booking question**
+    private function confirmBookingQuestion($moveDate, $pickupLocation, $destination)
+    {
+        return Question::create("✅ Confirm your booking:\n📅 Date: $moveDate\n📍 From: $pickupLocation\n➡️ To: $destination")
+            ->addButtons([
+                Button::create('✅ Confirm Booking')->value('confirm'),
+                Button::create('❌ Cancel')->value('cancel'),
+            ]);
     }
 }
