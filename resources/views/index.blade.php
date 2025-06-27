@@ -177,11 +177,11 @@
     </style>
     <script>
         var botmanWidget = {
-            title: "💳 TripToll Virtual Assistant",
-            introMessage: "👋 Welcome to TripToll! How can I assist you today?",
+            title: "💳 Test again Virtual Assistant",
+            introMessage: "👋 Welcome to Test again! How can I assist you today?",
             mainColor: "#010E2A",  
             bubbleBackground: "#000000",  
-            aboutText: "🚀 Powered by TripToll",
+            aboutText: "🚀 Powered by Test again",
             bubbleAvatarUrl: "https://img.icons8.com/?size=100&id=8dViXhX9K4du&format=png&color=000000",  
             headerTextColor: "#FFFFFF", 
             textColor: "#2C3E50",  
