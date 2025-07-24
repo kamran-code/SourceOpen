@@ -10,6 +10,8 @@ use BotMan\BotMan\Cache\LaravelCache;
 use BotMan\Drivers\Web\WebDriver;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Support\Facades\Schema;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,5 +39,6 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         VerifyCsrfToken::except(['/botman']);
+         Schema::defaultStringLength(191);
     }
 }

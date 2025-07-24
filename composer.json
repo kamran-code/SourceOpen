@@ -10,7 +10,9 @@
         "botman/driver-web": "^1.5",
         "illuminate/cache": "*",
         "laravel/framework": "^11.9",
+        "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "symfony/cache": "^7.2"
     },
     "require-dev": {

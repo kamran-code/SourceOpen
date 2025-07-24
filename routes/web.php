@@ -15,3 +15,7 @@ Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 Route::match(['get', 'post'], '/botman-bank', [BotManBankController::class, 'handle']);
 Route::match(['get', 'post'], '/botman-triptoll', [BotManBankController::class, 'handle_triptoll']);
 
+
+Route::get('/qr', [HomeController::class, 'index1'])->name('qr.index');
+Route::get('/qr/{id}', [HomeController::class, 'generate'])->name('qr.show');
+
