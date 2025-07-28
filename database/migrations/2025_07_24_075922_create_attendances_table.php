@@ -6,27 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-   public function up()
-{
-    Schema::create('attendances', function (Blueprint $table) {
-        $table->id();
+    public function up()
+    {
+        Schema::create('attendances', function (Blueprint $table) {
+            $table->id();
 
-        $table->string('student_id');
-        $table->string('student_name');
+            $table->string('student_id');
+            $table->string('event_id');
+            $table->date('date');
+            $table->timestamp('checkin_at')->nullable();
+            $table->timestamp('checkout_at')->nullable();
 
-        $table->date('date'); // daily tracking
-        $table->timestamp('marked_at')->useCurrent();
+            $table->timestamps();
 
-        $table->unique(['student_id', 'date']); // no duplicates per day
-    });
-}
+            // Prevent duplicate attendance per event per day
+            $table->unique(['student_id', 'event_id', 'date']);
+        });
+    }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('attendances');

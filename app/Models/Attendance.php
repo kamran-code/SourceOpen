@@ -14,9 +14,6 @@ class Attendance extends Model
 
 
     protected $fillable = [
-        'student_id',
-        'student_name',
-        'date',
-        'marked_at',
+        'student_id', 'event_id', 'date', 'checkin_at', 'checkout_at'
     ];
 }

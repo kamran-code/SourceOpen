@@ -58,67 +58,74 @@ class HomeController extends Controller
 
 
 
-   public function mark(Request $request)
-{
-    $students = [
-        ['id' => 'S101', 'name' => 'Alice'],
-        ['id' => 'S102', 'name' => 'Bob'],
-        ['id' => 'S103', 'name' => 'Charlie'],
-        ['id' => 'S104', 'name' => 'Diana'],
-        ['id' => 'S105', 'name' => 'Ethan'],
-        ['id' => 'S106', 'name' => 'Fiona'],
-        ['id' => 'S107', 'name' => 'George'],
-        ['id' => 'S108', 'name' => 'Hannah'],
-        ['id' => 'S109', 'name' => 'Ivan'],
-        ['id' => 'S110', 'name' => 'Jasmine'],
-    ];
+    public function mark(Request $request)
+    {
+        $studentId = $request->input('student_id');
+        $eventId   = $request->input('event_id');
 
-    // Accept raw JSON body (use request()->getContent() if necessary)
-    $data = $request->all();
+        if (!$studentId || !$eventId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Missing student_id or event_id.',
+            ], 400);
+        }
 
-    $userId  = $data['user_id'] ?? null;
-    $eventId = $data['event_id'] ?? null;
+        $today = Carbon::today()->toDateString();
 
-    if (!$userId || !$eventId) {
+        $attendance = Attendance::where('student_id', $studentId)
+            ->where('event_id', $eventId)
+            ->where('date', $today)
+            ->first();
+
+        // Generate dummy name/class (for response only)
+        $dummyName  = 'Student_' . substr($studentId, -3);     // e.g., Student_101
+        $dummyClass = 'Class-' . rand(1, 12);                  // e.g., Class-7
+
+        if (!$attendance) {
+            // First-time check-in
+            Attendance::create([
+                'student_id' => $studentId,
+                'event_id'   => $eventId,
+                'date'       => $today,
+                'checkin_at' => now(),
+            ]);
+
+            return response()->json([
+                'success'      => true,
+                'status'       => 'checkin',
+                'student_id'   => $studentId,
+                'event_id'     => $eventId,
+                'student_name' => $dummyName,
+                'class'        => $dummyClass,
+                'timestamp'    => now()->toDateTimeString(),
+                'message'      => 'Check-in successful.',
+            ]);
+        }
+
+        if ($attendance->checkin_at && !$attendance->checkout_at) {
+            // Mark check-out
+            $attendance->update(['checkout_at' => now()]);
+
+            return response()->json([
+                'success'      => true,
+                'status'       => 'checkout',
+                'student_id'   => $studentId,
+                'event_id'     => $eventId,
+                'student_name' => $dummyName,
+                'class'        => $dummyClass,
+                'timestamp'    => now()->toDateTimeString(),
+                'message'      => 'Check-out successful.',
+            ]);
+        }
+
         return response()->json([
-            'success' => false,
-            'message' => 'Invalid QR data: user_id or event_id missing.',
-        ], 400);
-    }
-
-    $student = collect($students)->firstWhere('id', $userId);
-
-    if (!$student) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Student not found.',
-        ], 404);
-    }
-
-    $today = Carbon::today()->toDateString();
-
-    $alreadyMarked = Attendance::where('student_id', $userId)
-        ->where('date', $today)
-        ->exists();
-
-    if ($alreadyMarked) {
-        return response()->json([
-            'success' => false,
-            'message' => "Attendance already marked for {$student['name']} today.",
+            'success'      => false,
+            'status'       => 'completed',
+            'student_id'   => $studentId,
+            'event_id'     => $eventId,
+            'student_name' => $dummyName,
+            'class'        => $dummyClass,
+            'message'      => 'Attendance already completed for today.',
         ]);
     }
-
-    Attendance::create([
-        'student_id'   => $student['id'],
-        'student_name' => $student['name'],
-        'date'         => $today,
-        'marked_at'    => now(),
-    ]);
-
-    return response()->json([
-        'success' => true,
-        'message' => "Attendance marked for {$student['name']}.",
-    ]);
-}
-
 }
