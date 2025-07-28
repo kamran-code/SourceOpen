@@ -8,5 +8,4 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/scan', [HomeController::class, 'mark']);
-
+Route::post('/scan', [HomeController::class, 'mark']);

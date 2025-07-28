@@ -18,7 +18,7 @@ Route::match(['get', 'post'], '/botman-triptoll', [BotManBankController::class, 
 
 
 Route::get('/qr', [HomeController::class, 'index1'])->name('qr.index');
-Route::get('/qr/{id}', [HomeController::class, 'generate'])->name('qr.show');
+Route::get('/qr/{id}/{eventId}', [HomeController::class, 'generate'])->name('qr.show');
 
 Route::get('/clear', function () {
     DB::table('attendances')->truncate();

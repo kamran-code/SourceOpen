@@ -15,7 +15,7 @@
         </div>
 
         <div class="mt-4 text-sm text-gray-600">
-            URL: <a href="{{ $url }}"  class="text-blue-600 hover:underline">{{ $url }}</a>
+            URL: <a href="{{ $data }}"  class="text-blue-600 hover:underline">{{ $data }}</a>
         </div>
 
         <div class="mt-6">
