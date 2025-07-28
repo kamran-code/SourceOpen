@@ -32,7 +32,7 @@ class HomeController extends Controller
             'students' => $this->students
         ]);
     }
-    public function generate($id)
+    public function generate($id, $eventId)
     {
         $student = collect($this->students)->firstWhere('id', $id);
 
@@ -40,15 +40,21 @@ class HomeController extends Controller
             abort(404, 'Student not found');
         }
 
-        $url = url('/api/scan?student=' . $student['id']);
-        $qr = QrCode::format('svg')->size(300)->generate($url);
+        // Embed only raw data (not a URL) into QR
+        $data = json_encode([
+            'user_id' => $student['id'],
+            'event_id' => $eventId
+        ]);
+
+        $qr = QrCode::format('svg')->size(300)->generate($data);
 
         return view('qr.show', [
             'student' => $student,
             'qr' => $qr,
-            'url' => $url
+            'data' => $data // Optional: to show what’s embedded
         ]);
     }
+
 
     public function mark(Request $request)
     {
@@ -83,10 +89,10 @@ class HomeController extends Controller
             ->exists();
 
         if ($alreadyMarked) {
-             return response()->json([
+            return response()->json([
                 'success' => false,
                 'message' => "Attendance already marked for {$student['name']} today.",
-                
+
             ]);
         }
 
