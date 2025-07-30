@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\Attendance;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Http;
 
 class HomeController extends Controller
 {
@@ -60,14 +61,26 @@ class HomeController extends Controller
 
     public function mark(Request $request)
     {
-        return response()->json([
-            'status'       => 1,
-            'checkin'      => false,
-            'message'      => 'Saved',
-            'student_name' => 'Kamran Khan',
-            'event_name'   => 'XLE2425FSCE02',
-            'start_time'   => '23 February 2025 10:00 AM',
-            'end_time'     => '02 March 2025 09:00 PM',
-        ]);
+        $queryParams = [
+            'action'   => 'startscan',
+            'type'     => 'event',
+            'user_id'  => 'WTZYWVZOdUkyV3R0emZsN3JBMERsQT09',
+            'event_id' => 'T1VEbElaTFdieFBxN2VYUGVpTzNBUT09'
+        ];
+
+        $url = 'https://online.xl-education.co.uk/scanner/backend/action?' . http_build_query($queryParams);
+
+        try {
+            // Send POST request with no body, only query parameters
+            $response = Http::asForm()->post($url, []);
+
+            // Return JSON response from remote API
+            return response()->json($response->json(), $response->status());
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Request failed: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }
