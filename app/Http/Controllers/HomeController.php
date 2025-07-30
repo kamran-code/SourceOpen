@@ -60,72 +60,14 @@ class HomeController extends Controller
 
     public function mark(Request $request)
     {
-        $studentId = $request->input('student_id');
-        $eventId   = $request->input('event_id');
-
-        if (!$studentId || !$eventId) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Missing student_id or event_id.',
-            ], 400);
-        }
-
-        $today = Carbon::today()->toDateString();
-
-        $attendance = Attendance::where('student_id', $studentId)
-            ->where('event_id', $eventId)
-            ->where('date', $today)
-            ->first();
-
-        // Generate dummy name/class (for response only)
-        $dummyName  = 'Student_' . substr($studentId, -3);     // e.g., Student_101
-        $dummyClass = 'Class-' . rand(1, 12);                  // e.g., Class-7
-
-        if (!$attendance) {
-            // First-time check-in
-            Attendance::create([
-                'student_id' => $studentId,
-                'event_id'   => $eventId,
-                'date'       => $today,
-                'checkin_at' => now(),
-            ]);
-
-            return response()->json([
-                'success'      => true,
-                'status'       => 'checkin',
-                'student_id'   => $studentId,
-                'event_id'     => $eventId,
-                'student_name' => $dummyName,
-                'class'        => $dummyClass,
-                'timestamp'    => now()->toDateTimeString(),
-                'message'      => 'Check-in successful.',
-            ]);
-        }
-
-        if ($attendance->checkin_at && !$attendance->checkout_at) {
-            // Mark check-out
-            $attendance->update(['checkout_at' => now()]);
-
-            return response()->json([
-                'success'      => true,
-                'status'       => 'checkout',
-                'student_id'   => $studentId,
-                'event_id'     => $eventId,
-                'student_name' => $dummyName,
-                'class'        => $dummyClass,
-                'timestamp'    => now()->toDateTimeString(),
-                'message'      => 'Check-out successful.',
-            ]);
-        }
-
         return response()->json([
-            'success'      => false,
-            'status'       => 'completed',
-            'student_id'   => $studentId,
-            'event_id'     => $eventId,
-            'student_name' => $dummyName,
-            'class'        => $dummyClass,
-            'message'      => 'Attendance already completed for today.',
+            'status'       => 1,
+            'checkin'      => false,
+            'message'      => 'Saved',
+            'student_name' => 'Swara Mahabhashyam',
+            'event_name'   => 'XLE2425FSCE02',
+            'start_time'   => '23 February 2025 10:00 AM',
+            'end_time'     => '02 March 2025 09:00 PM',
         ]);
     }
 }
