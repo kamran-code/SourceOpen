@@ -70,17 +70,29 @@ class HomeController extends Controller
 
         $url = 'https://online.xl-education.co.uk/scanner/backend/action?' . http_build_query($queryParams);
 
-        try {
-            // Send POST request with no body, only query parameters
-            $response = Http::asForm()->post($url, []);
+        $ch = curl_init();
 
-            // Return JSON response from remote API
-            return response()->json($response->json(), $response->status());
-        } catch (\Exception $e) {
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true); // POST request
+        curl_setopt($ch, CURLOPT_POSTFIELDS, ''); // Empty POST body
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Return response
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10); // Optional timeout
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Disable SSL check if needed
+
+        $response = curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            $error = curl_error($ch);
+            curl_close($ch);
             return response()->json([
                 'status' => 0,
-                'message' => 'Request failed: ' . $e->getMessage(),
+                'message' => 'cURL error: ' . $error,
             ], 500);
         }
+
+        curl_close($ch);
+
+
+        return response($response, 200)->header('Content-Type', 'application/json');
     }
 }
