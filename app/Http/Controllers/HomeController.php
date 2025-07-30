@@ -61,11 +61,16 @@ class HomeController extends Controller
 
     public function mark(Request $request)
     {
+        $userId  = $request->input('user_id');
+        $eventId = $request->input('event_id');
+        $action = $request->input('action');
+        $type = $request->input('type');
+
         $queryParams = [
-            'action'   => 'startscan',
-            'type'     => 'event',
-            'user_id'  => 'WTZYWVZOdUkyV3R0emZsN3JBMERsQT09',
-            'event_id' => 'T1VEbElaTFdieFBxN2VYUGVpTzNBUT09'
+            'action'   => $action,
+            'type'     => $type,
+            'user_id'  => $userId,
+            'event_id' => $eventId
         ];
 
         $url = 'https://online.xl-education.co.uk/scanner/backend/action?' . http_build_query($queryParams);
