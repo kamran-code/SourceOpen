@@ -64,7 +64,7 @@ class HomeController extends Controller
             'status'       => 1,
             'checkin'      => false,
             'message'      => 'Saved',
-            'student_name' => 'Swara Mahabhashyam',
+            'student_name' => 'Kamran Khan',
             'event_name'   => 'XLE2425FSCE02',
             'start_time'   => '23 February 2025 10:00 AM',
             'end_time'     => '02 March 2025 09:00 PM',
